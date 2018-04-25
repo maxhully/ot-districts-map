@@ -3,7 +3,10 @@ import mapboxgl from "mapbox-gl";
 
 //const counties =
 //    "https://api.censusreporter.org/1.0/geo/show/tiger2016?geo_ids=050|04000US55";
-const tracts = "https://api.censusreporter.org/1.0/geo/show/tiger2016?geo_ids=140|04000US55"
+// Pennsylvania tracts:
+//const tracts = "https://api.censusreporter.org/1.0/geo/show/tiger2016?geo_ids=140|04000US42"
+
+import tracts from "../data/pennsylvania.json";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 

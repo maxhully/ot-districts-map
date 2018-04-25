@@ -54,11 +54,11 @@ const states = {
     Wyoming: "04000US56"
 };
 
-export const getCensusTracts = (
+export function getCensusTracts(
     stateName = null,
     stateGeoid = null,
     release = "tiger2016"
-) => {
+) {
     if (stateName === null && stateGeoid === null) {
         throw TypeError("getCensusTracts needs a stateName or stateGeoid");
     }
@@ -71,6 +71,6 @@ export const getCensusTracts = (
         .catch(reason =>
             console.error("Couldn't fetch from api.censusreporter.org")
         );
-};
+}
 
 export default getCensusTracts;
