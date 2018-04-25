@@ -1,14 +1,23 @@
 import React from "react";
-import Map from "./components/Map";
+//import Map from "./components/Map";
 
-/*import MapGL from "react-map-gl";
+import MapGL from "react-map-gl";
 import DeckGL, { GeoJsonLayer } from "deck.gl";
 
-import tracts from "./data/wisconsin_tracts.json";
+import { getCensusTracts } from "./census-client";
+
+const LIGHT_SETTINGS = {
+    lightsPosition: [-125, 50.5, 5000, -122.8, 48.5, 8000],
+    ambientRatio: 0.2,
+    diffuseRatio: 0.5,
+    specularRatio: 0.3,
+    lightsStrength: [1.0, 0.0, 2.0, 0.0],
+    numberOfLights: 2
+};
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-class App extends Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,38 +32,41 @@ class App extends Component {
             }
         };
     }
-    _onViewportChange = viewport => {
+    componentDidMount = () => {
+        getCensusTracts("Pennsylvania").then(data => this.setState(state => ({ ...state, data })));
+    };
+    onViewportChange = viewport => {
         this.setState(state => ({
             ...this.state,
             viewport: { ...state.viewport, ...viewport }
         }));
     };
     render() {
-        const tractsLayer = new GeoJsonLayer({
-            id: "tracts",
-            data: tracts,
-            filled: true,
-            stroked: false,
-            extruded: false,
-            getElevation: f => f.properties["2013_population_estimate"]
-        });
+        const layer = this.state.data
+            ? new GeoJsonLayer({
+                  id: "tracts",
+                  data: this.state.data["features"],
+                  filled: true,
+                  extruded: true,
+                  opacity: 0.8,
+                  getFillColor: x => [136, 28, 28],
+                  getElevation: x => x.properties["2013_population_estimate"],
+                  lightSettings: LIGHT_SETTINGS
+              })
+            : null;
         const { viewport } = this.state;
         return (
             <main>
                 <MapGL
                     {...viewport}
-                    onViewportChange={this._onViewportChange}
+                    onViewportChange={this.onViewportChange}
                     mapboxApiAccessToken={MAPBOX_TOKEN}
                 >
-                    <DeckGL {...viewport} layers={[tractsLayer]} />
+                    <DeckGL {...viewport} layers={layer ? [layer] : []} />
                 </MapGL>
             </main>
         );
     }
-}*/
-
-function App(props) {
-    return <Map />
 }
 
 export default App;
