@@ -1,10 +1,10 @@
 import React from "react";
-import Map from "./components/Map";
+//import Map from "./components/Map";
 
-/*import MapGL from "react-map-gl";
+import MapGL from "react-map-gl";
 import DeckGL, { GeoJsonLayer } from "deck.gl";
 
-import { getCensusTracts } from "./census-client";
+import districtsGeojson from "./districts.js";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -15,16 +15,16 @@ class App extends React.Component {
             viewport: {
                 width: 1080,
                 height: 720,
-                longitude: -92.0,
-                latitude: 45.0,
-                zoom: 5,
+                longitude: -77.86,
+                latitude: 40.7934,
+                zoom: 7,
                 pitch: 0,
                 bearing: 0
             }
         };
     }
     componentDidMount = () => {
-        getCensusTracts("Pennsylvania").then(data => this.setState(state => ({ ...state, data })));
+        this.setState(state => ({ ...state, data: districtsGeojson() }));
     };
     onViewportChange = viewport => {
         this.setState(state => ({
@@ -35,11 +35,11 @@ class App extends React.Component {
     render() {
         const layer = this.state.data
             ? new GeoJsonLayer({
-                  id: "tracts",
-                  data: this.state.data["features"],
+                  id: "districts",
+                  data: this.state.data,
                   filled: true,
                   opacity: 0.8,
-                  getFillColor: x => [136, 28, 28],
+                  getFillColor: x => [136, 28, 28]
               })
             : null;
         const { viewport } = this.state;
@@ -55,8 +55,8 @@ class App extends React.Component {
             </main>
         );
     }
-}*/
+}
 
-export const App = () => <main><Map /></main>
+//export const App = () => <main><Map /></main>
 
 export default App;

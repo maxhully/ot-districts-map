@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@turf/union": "^6.0.2",
     "deck.gl": "^5.1.4",
     "mapbox-gl": "^0.45.0-beta.1",
     "react": "^16.3.1",
