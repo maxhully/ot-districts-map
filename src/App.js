@@ -8,6 +8,8 @@ import districtsGeojson from "./districts.js";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
+const COLORS = [[100,100,100],[220,220,60], [160,80,160]]
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -15,8 +17,8 @@ class App extends React.Component {
             viewport: {
                 width: 1080,
                 height: 720,
-                longitude: -77.86,
-                latitude: 40.7934,
+                longitude: -72.80,
+                latitude: 44.00,
                 zoom: 7,
                 pitch: 0,
                 bearing: 0
@@ -39,7 +41,7 @@ class App extends React.Component {
                   data: this.state.data,
                   filled: true,
                   opacity: 0.8,
-                  getFillColor: x => [136, 28, 28]
+                  getFillColor: x => COLORS[x.properties.district % 3]
               })
             : null;
         const { viewport } = this.state;

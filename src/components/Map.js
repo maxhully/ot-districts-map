@@ -32,7 +32,7 @@ const COLORS = [
 
 const DEFAULT_OPTIONS = {
     style: "mapbox://styles/mapbox/streets-v9",
-    center: [-77.8600, 40.7934],
+    center: [-77.86, 40.7934],
     zoom: 6
 };
 
