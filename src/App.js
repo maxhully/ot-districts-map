@@ -8,7 +8,12 @@ import districtsGeojson from "./districts.js";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const COLORS = [[100,100,100],[220,220,60], [160,80,160]]
+const COLORS = [
+    [100, 100, 100],
+    [220, 220, 60],
+    [160, 80, 160],
+    [255, 255, 230]
+];
 
 class App extends React.Component {
     constructor(props) {
@@ -17,8 +22,8 @@ class App extends React.Component {
             viewport: {
                 width: 1080,
                 height: 720,
-                longitude: -72.80,
-                latitude: 44.00,
+                longitude: -72.8,
+                latitude: 44.0,
                 zoom: 7,
                 pitch: 0,
                 bearing: 0
@@ -35,13 +40,16 @@ class App extends React.Component {
         }));
     };
     render() {
-        const layer = this.state.data
+        const districtsLayer = this.state.data
             ? new GeoJsonLayer({
                   id: "districts",
                   data: this.state.data,
                   filled: true,
+                  stroked: true,
                   opacity: 0.8,
-                  getFillColor: x => COLORS[x.properties.district % 3]
+                  getFillColor: x => COLORS[x.properties.district],
+                  getLineColor: x => [200,200,200],
+                  getLineWidth: x => 100
               })
             : null;
         const { viewport } = this.state;
@@ -52,7 +60,14 @@ class App extends React.Component {
                     onViewportChange={this.onViewportChange}
                     mapboxApiAccessToken={MAPBOX_TOKEN}
                 >
-                    <DeckGL {...viewport} layers={layer ? [layer] : []} />
+                    <DeckGL
+                        {...viewport}
+                        layers={
+                            districtsLayer
+                                ? [districtsLayer]
+                                : []
+                        }
+                    />
                 </MapGL>
             </main>
         );

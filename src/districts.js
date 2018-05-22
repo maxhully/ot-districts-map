@@ -11,11 +11,21 @@ export default function districtsGeojson() {
     }));
     console.log(polygons);
     return polygons;*/
+    const features = districts
+        .map((d, districtNumber) =>
+            d.map(i => {
+                return {
+                    ...tracts.features[i],
+                    properties: {
+                        ...tracts.features[i].properties,
+                        district: districtNumber
+                    }
+                };
+            })
+        )
+        .reduce((acc, x) => [...acc, ...x], []);
     return {
         ...tracts,
-        features: tracts.features.map((x, i) => ({
-            ...x,
-            properties: { ...x.properties, district: i in districts[0] ? 1 : 2 }
-        }))
+        features
     };
 }
