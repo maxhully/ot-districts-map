@@ -1,95 +1,81 @@
-import React, { Component } from "react";
-import mapboxgl from "mapbox-gl";
+import React from "react";
 
-//const counties =
-//    "https://api.censusreporter.org/1.0/geo/show/tiger2016?geo_ids=050|04000US55";
-// Pennsylvania tracts:
-//const tracts = "https://api.censusreporter.org/1.0/geo/show/tiger2016?geo_ids=140|04000US42"
+import MapGL from "react-map-gl";
+import DeckGL, { GeoJsonLayer } from "deck.gl";
 
-//import tracts from "../data/pennsylvania.json";
-import districtsGeojson from "../districts.js";
-
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
-
-const districts = districtsGeojson();
+const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const COLORS = [
-    "#42f4d1",
-    "#d6d852",
-    "#c97454",
-    "#7e16a0",
-    "#2e1984",
-    "#efd794",
-    "#3f8433",
-    "#42f4d1",
-    "#d6d852",
-    "#c97454",
-    "#7e16a0",
-    "#2e1984",
-    "#efd794",
-    "#3f8433"
+    [100, 100, 100],
+    [220, 220, 60],
+    [160, 80, 160],
+    [255, 255, 230]
 ];
 
-const DEFAULT_OPTIONS = {
-    style: "mapbox://styles/mapbox/streets-v9",
-    center: [-77.86, 40.7934],
-    zoom: 6
-};
-
-/*
-const colorFunction = COLORS.reduce((color, f, i) => [...f, i, color], [
-    "match",
-    ["get", "id"]
-]);
-*/
-
-export default class Map extends Component {
-    componentDidMount() {
-        this.map = new mapboxgl.Map({
-            ...DEFAULT_OPTIONS,
-            container: "map"
-        });
-
-        this.map.on("load", () => {
-            //this.map.addSource("tracts", { type: "geojson", data: tracts });
-            this.map.addSource("districts", {
-                type: "geojson",
-                data: districts
-            });
-            this.map.addLayer(
-                {
-                    id: "districts",
-                    type: "fill",
-                    source: "districts",
-                    layout: {},
-                    paint: {
-                        "fill-color": "#2e1984",
-                        "fill-opacity": 0.8
-                    }
-                },
-                "water"
-            );
-            /*this.map.addLayer(
-                {
-                    id: "tracts-outline",
-                    type: "line",
-                    source: "tracts",
-                    layout: {},
-                    paint: {
-                        "line-color": "#AAAAAA",
-                        "line-opacity": 0.8
-                    }
-                },
-                "water"
-            );*/
-        });
+class Map extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            viewport: {
+                width: 1080,
+                height: 600,
+                longitude: -72.8,
+                latitude: 44.0,
+                zoom: 7,
+                pitch: 0,
+                bearing: 0
+            }
+        };
     }
+    resize = () => {
+        this.setState(state => ({
+            ...state,
+            viewport: {
+                ...state.viewport,
+                width: Math.min(window.innerWidth, 1080)
+            }
+        }));
+    };
+    componentDidMount = () => {
+        window.addEventListener("resize", this.resize);
+        this.setState(state => ({
+            ...state,
+            data: this.props.getInitialGeojson()
+        }));
+    };
+    onViewportChange = viewport => {
+        this.setState(state => ({
+            ...state,
+            viewport: { ...state.viewport, ...viewport }
+        }));
+    };
     render() {
+        const districtsLayer = this.state.data
+            ? new GeoJsonLayer({
+                  id: "districts",
+                  data: this.state.data,
+                  filled: true,
+                  stroked: true,
+                  opacity: 0.8,
+                  getFillColor: x => COLORS[x.properties.district],
+                  getLineColor: x => [200, 200, 200],
+                  getLineWidth: x => 100
+              })
+            : null;
+        const { viewport } = this.state;
         return (
-            <div
-                style={{ position: "absolute", width: "100%", height: "100%" }}
-                id="map"
-            />
+            <MapGL
+                {...viewport}
+                onViewportChange={this.onViewportChange}
+                mapboxApiAccessToken={MAPBOX_TOKEN}
+            >
+                <DeckGL
+                    {...viewport}
+                    layers={districtsLayer ? [districtsLayer] : []}
+                />
+            </MapGL>
         );
     }
 }
+
+export default Map;

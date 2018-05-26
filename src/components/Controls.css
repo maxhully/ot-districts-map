@@ -1,0 +1,80 @@
+ul {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    flex-grow: 1;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: space-around;
+    line-height: 2em;
+    list-style: none;
+    padding: 0 10px 0 10px;
+    margin: 0;
+}
+
+label {
+    flex-grow: 1;
+}
+
+input {
+    background-color: #4c4d4f;
+    border: none;
+    flex-grow: 1;
+    font: inherit;
+    color: inherit;
+    padding: 0 5px 0 5px;
+    border-radius: 5px;
+}
+
+input:active {
+    outline: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+button {
+    border: none;
+    outline: none;
+    background-color: #14b37d;
+    color: inherit;
+    font: inherit;
+    border-radius: 5px;
+    align-self: center;
+    justify-self: center;
+    flex-grow: 1;
+    width: 100px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #60c198;
+}
+
+button:focus {
+    background-color: #60c198;
+}
+/*
+@keyframes pulse {
+    0% {
+        background-color: #14b37d;
+    }
+    50% {
+        background-color: #60c198;
+    }
+}
+
+button:focus {
+    animation: pulse 1s ease-in-out;
+    animation-iteration-count: infinite;
+    opacity: 1;
+}
+*/

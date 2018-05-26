@@ -2,7 +2,7 @@
 
 import tracts from "./data/vermont.json";
 
-import districts from "./data/vermont_districts.json";
+import districts from "./data/districts.json";
 
 export default function districtsGeojson() {
     /*const polygons = districts.map((indices, j) => ({
