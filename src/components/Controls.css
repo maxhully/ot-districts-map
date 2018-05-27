@@ -51,7 +51,7 @@ button {
     align-self: center;
     justify-self: center;
     flex-grow: 1;
-    width: 100px;
+    padding: 0 16px 0 16px;
     cursor: pointer;
 }
 

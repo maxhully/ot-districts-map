@@ -21,7 +21,7 @@ class Map extends React.Component {
                 height: 600,
                 longitude: -72.8,
                 latitude: 44.0,
-                zoom: 7,
+                zoom: 6,
                 pitch: 0,
                 bearing: 0
             }

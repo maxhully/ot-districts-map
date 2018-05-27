@@ -18,6 +18,8 @@ main {
   overflow: hidden;
 }
 
-canvas {
-  border-radius: 10px;
+@media (min-width: 1080px) {
+  canvas {
+    border-radius: 10px;
+  }
 }
