@@ -5,13 +5,6 @@ import DeckGL, { GeoJsonLayer } from "deck.gl";
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const COLORS = [
-    [100, 100, 100],
-    [220, 220, 60],
-    [160, 80, 160],
-    [255, 255, 230]
-];
-
 class Map extends React.Component {
     constructor(props) {
         super(props);
@@ -29,7 +22,6 @@ class Map extends React.Component {
     }
     resize = () => {
         this.setState(state => ({
-            ...state,
             viewport: {
                 ...state.viewport,
                 width: Math.min(window.innerWidth, 1080)
@@ -38,14 +30,12 @@ class Map extends React.Component {
     };
     componentDidMount = () => {
         window.addEventListener("resize", this.resize);
-        this.setState(state => ({
-            ...state,
+        this.setState({
             data: this.props.getInitialGeojson()
-        }));
+        });
     };
     onViewportChange = viewport => {
         this.setState(state => ({
-            ...state,
             viewport: { ...state.viewport, ...viewport }
         }));
     };
@@ -57,7 +47,7 @@ class Map extends React.Component {
                   filled: true,
                   stroked: true,
                   opacity: 0.8,
-                  getFillColor: x => COLORS[x.properties.district],
+                  getFillColor: x => x.properties.color,
                   getLineColor: x => [200, 200, 200],
                   getLineWidth: x => 100
               })
