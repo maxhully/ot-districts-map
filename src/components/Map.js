@@ -30,9 +30,6 @@ class Map extends React.Component {
     };
     componentDidMount = () => {
         window.addEventListener("resize", this.resize);
-        this.setState({
-            data: this.props.getInitialGeojson()
-        });
     };
     onViewportChange = viewport => {
         this.setState(state => ({
@@ -43,7 +40,7 @@ class Map extends React.Component {
         const districtsLayer = this.state.data
             ? new GeoJsonLayer({
                   id: "districts",
-                  data: this.state.data,
+                  data: this.props.censusTractsGeojson,
                   filled: true,
                   stroked: true,
                   opacity: 0.8,

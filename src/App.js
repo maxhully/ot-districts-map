@@ -5,8 +5,8 @@ import Controls from "./components/Controls";
 import TextInput from "./components/TextInput";
 
 import { getCensusTracts } from "./census-client";
-import { computeDistricts } from "./api";
-import { colorByDistrict } from "./colors";
+import { getDistricts } from "./api";
+import { colorByDistrict } from "./district-colors";
 import "./App.css";
 
 class App extends React.Component {
@@ -20,6 +20,29 @@ class App extends React.Component {
             previousNumberOfDistricts: 2
         };
     }
+    componentDidMount = () => {
+        this.getCensusTracts();
+        this.getDistricts();
+    };
+    getCensusTracts = () => {
+        getCensusTracts(this.state.stateName)
+            .then(fetchedGeojson => {
+                this.setState(state => ({
+                    censusTractGeojson: colorByDistrict(
+                        fetchedGeojson,
+                        state.districts
+                    )
+                }));
+            })
+            .catch(reason => console.error(reason));
+    };
+    getDistricts = () => {
+        getDistricts(this.state.stateName, this.state.numberOfDistricts).then(
+            fetchedDistricts => {
+                this.setState({ districts: fetchedDistricts });
+            }
+        );
+    };
     onChangeStateName = event => {
         this.setState({
             stateName: event.target.value
@@ -30,7 +53,7 @@ class App extends React.Component {
             numberOfDistricts: event.target.value
         });
     };
-    shouldComputeNewDistricts = ({
+    shouldGetNewDistricts = ({
         stateName,
         previousStateName,
         numberOfDistricts,
@@ -41,29 +64,16 @@ class App extends React.Component {
             numberOfDistricts !== previousNumberOfDistricts
         );
     };
-    shouldFetchNewGeojson = ({ stateName, previousStateName }) => {
+    shouldGetNewGeojson = ({ stateName, previousStateName }) => {
         return stateName !== previousStateName;
     };
+    computeDistricts;
     onGo = event => {
-        if (this.shouldComputeNewDistricts(this.state)) {
-            computeDistricts(
-                this.state.stateName,
-                this.state.numberOfDistricts
-            ).then(fetchedDistricts => {
-                this.setState({ districts: fetchedDistricts });
-            });
+        if (this.shouldGetNewDistricts(this.state)) {
+            this.getDistricts();
         }
-        if (this.shouldFetchNewGeojson(this.state)) {
-            getCensusTracts(this.state.stateName)
-                .then(fetchedGeojson => {
-                    this.setState(state => ({
-                        censusTractGeojson: colorByDistrict(
-                            fetchedGeojson,
-                            state.districts
-                        )
-                    }));
-                })
-                .catch(reason => console.error(reason));
+        if (this.shouldGetNewGeojson(this.state)) {
+            this.getCensusTracts();
         }
         this.setState(state => ({
             previousNumberOfDistricts: state.numberOfDistricts,
