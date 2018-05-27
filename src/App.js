@@ -13,7 +13,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            censusTractGeojson: {},
+            censusTractsGeojson: {},
             stateName: "Vermont",
             numberOfDistricts: 2,
             previousStateName: "Vermont",
@@ -21,27 +21,24 @@ class App extends React.Component {
         };
     }
     componentDidMount = () => {
-        this.getCensusTracts();
-        this.getDistricts();
+        this.getCensusTracts().then(districts => this.getDistricts());
     };
     getCensusTracts = () => {
-        getCensusTracts(this.state.stateName)
-            .then(fetchedGeojson => {
+        return getCensusTracts(this.state.stateName)
+            .then(geojson =>
                 this.setState(state => ({
-                    censusTractGeojson: colorByDistrict(
-                        fetchedGeojson,
-                        state.districts
-                    )
-                }));
-            })
+                    ...state,
+                    censusTractsGeojson: geojson
+                }))
+            )
             .catch(reason => console.error(reason));
     };
     getDistricts = () => {
-        getDistricts(this.state.stateName, this.state.numberOfDistricts).then(
-            fetchedDistricts => {
-                this.setState({ districts: fetchedDistricts });
-            }
-        );
+        return getDistricts(this.state.stateName, this.state.numberOfDistricts)
+            .then(districts =>
+                colorByDistrict(this.state.censusTractsGeojson, districts)
+            )
+            .then(geojson => this.setState({ censusTractsGeojson: geojson }));
     };
     onChangeStateName = event => {
         this.setState({
@@ -67,7 +64,6 @@ class App extends React.Component {
     shouldGetNewGeojson = ({ stateName, previousStateName }) => {
         return stateName !== previousStateName;
     };
-    computeDistricts;
     onGo = event => {
         if (this.shouldGetNewDistricts(this.state)) {
             this.getDistricts();
@@ -83,7 +79,7 @@ class App extends React.Component {
     render = () => (
         <main>
             <h1>Optimal Transport Districts</h1>
-            <Map />
+            <Map layerData={this.state.censusTractsGeojson} />
             <Controls>
                 <TextInput
                     label="State"

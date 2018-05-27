@@ -37,14 +37,14 @@ class Map extends React.Component {
         }));
     };
     render() {
-        const districtsLayer = this.state.data
+        const districtsLayer = this.props.layerData
             ? new GeoJsonLayer({
                   id: "districts",
-                  data: this.props.censusTractsGeojson,
+                  data: this.props.layerData,
                   filled: true,
                   stroked: true,
-                  opacity: 0.8,
-                  getFillColor: x => x.properties.color,
+                  opacity: 0.9,
+                  getFillColor: x => x.properties.color || [50,50,50],
                   getLineColor: x => [200, 200, 200],
                   getLineWidth: x => 100
               })
