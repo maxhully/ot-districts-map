@@ -19,19 +19,35 @@ const hexToRGB = hex => {
     return [red, green, blue];
 };
 
+export const injectProperties = (feature, properties) => {
+    return {
+        ...feature,
+        properties: {
+            ...feature.properties,
+            ...properties
+        }
+    };
+};
+
 export const colorByDistrict = (censusTracts, districts) => {
-    const features = districts
+    const geoidToIndex = censusTracts.features.reduce(
+        (dictionary, district, index) => ({
+            ...dictionary,
+            [district.properties.geoid]: index
+        }),
+        {}
+    );
+    const allDistrictsIndices = districts.map(district =>
+        district.members.map(geoid => geoidToIndex[geoid])
+    );
+    const features = allDistrictsIndices
         .map((districtIndices, districtNumber) =>
-            districtIndices.map(index => {
-                return {
-                    ...censusTracts.features[index],
-                    properties: {
-                        ...censusTracts.features[index].properties,
-                        district: districtNumber,
-                        color: hexToRGB(COLORS[districtNumber])
-                    }
-                };
-            })
+            districtIndices.map(index =>
+                injectProperties(censusTracts.features[index], {
+                    district: districtNumber,
+                    color: hexToRGB(COLORS[districtNumber])
+                })
+            )
         )
         .reduce(
             (accumulatedFeatures, featuresInOneDistrict) => [
