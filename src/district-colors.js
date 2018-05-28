@@ -21,8 +21,8 @@ const hexToRGB = hex => {
 
 export const colorByDistrict = (censusTracts, districts) => {
     const features = districts
-        .map((d, districtNumber) =>
-            d.map(index => {
+        .map((districtIndices, districtNumber) =>
+            districtIndices.map(index => {
                 return {
                     ...censusTracts.features[index],
                     properties: {

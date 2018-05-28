@@ -1,44 +1,54 @@
 import React from "react";
-
-import Map from "./components/Map";
-import Controls from "./components/Controls";
-import TextInput from "./components/TextInput";
-
-import { getCensusTracts } from "./census-client";
-import { getDistricts } from "./api";
-import { colorByDistrict } from "./district-colors";
 import "./App.css";
+import { getDistricts } from "./api";
+import { getCensusTracts } from "./census-client";
+import Controls from "./components/Controls";
+import Header from "./components/Header";
+import Map from "./components/Map";
+import TextInput from "./components/TextInput";
+import { colorByDistrict } from "./district-colors";
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             censusTractsGeojson: {},
-            stateName: "Vermont",
-            numberOfDistricts: 2,
-            previousStateName: "Vermont",
-            previousNumberOfDistricts: 2
+            stateName: "",
+            numberOfDistricts: 0,
+            previousStateName: null,
+            status: "Ok"
         };
     }
-    componentDidMount = () => {
-        this.getCensusTracts().then(districts => this.getDistricts());
+    getCensusTracts = async () => {
+        if (this.shouldGetNewGeojson(this.state)) {
+            return await getCensusTracts(this.state.stateName);
+        } else {
+            return this.state.censusTractsGeojson;
+        }
     };
-    getCensusTracts = () => {
-        return getCensusTracts(this.state.stateName)
-            .then(geojson =>
-                this.setState(state => ({
-                    ...state,
-                    censusTractsGeojson: geojson
-                }))
-            )
-            .catch(reason => console.error(reason));
+    shouldGetNewGeojson = ({ stateName, previousStateName }) => {
+        return stateName !== previousStateName;
     };
-    getDistricts = () => {
-        return getDistricts(this.state.stateName, this.state.numberOfDistricts)
-            .then(districts =>
-                colorByDistrict(this.state.censusTractsGeojson, districts)
-            )
-            .then(geojson => this.setState({ censusTractsGeojson: geojson }));
+    onSubmit = async event => {
+        event.target.blur();
+        this.setState({ status: "Waiting..." });
+
+        const censusTracts = await this.getCensusTracts();
+        const districts = await getDistricts(
+            this.state.stateName,
+            this.state.numberOfDistricts
+        );
+
+        if (!districts.error) {
+            const newGeojson = await colorByDistrict(censusTracts, districts);
+            this.setState(state => ({
+                censusTractsGeojson: newGeojson,
+                previousStateName: state.stateName,
+                status: "Ok"
+            }));
+        } else {
+            this.setState(state => ({ status: "Error" }));
+        }
     };
     onChangeStateName = event => {
         this.setState({
@@ -50,35 +60,9 @@ class App extends React.Component {
             numberOfDistricts: event.target.value
         });
     };
-    shouldGetNewDistricts = ({
-        stateName,
-        previousStateName,
-        numberOfDistricts,
-        previousNumberOfDistricts
-    }) => {
-        return (
-            stateName !== previousStateName ||
-            numberOfDistricts !== previousNumberOfDistricts
-        );
-    };
-    shouldGetNewGeojson = ({ stateName, previousStateName }) => {
-        return stateName !== previousStateName;
-    };
-    onGo = event => {
-        if (this.shouldGetNewDistricts(this.state)) {
-            this.getDistricts();
-        }
-        if (this.shouldGetNewGeojson(this.state)) {
-            this.getCensusTracts();
-        }
-        this.setState(state => ({
-            previousNumberOfDistricts: state.numberOfDistricts,
-            previousStateName: state.stateName
-        }));
-    };
     render = () => (
         <main>
-            <h1>Optimal Transport Districts</h1>
+            <Header status={this.state.status} />
             <Map layerData={this.state.censusTractsGeojson} />
             <Controls>
                 <TextInput
@@ -91,7 +75,7 @@ class App extends React.Component {
                     value={this.state.numberOfDistricts}
                     onChange={this.onChangeNumberOfDistricts}
                 />
-                <button onClick={this.onGo}>Go</button>
+                <button onClick={this.onSubmit}>Go</button>
             </Controls>
         </main>
     );

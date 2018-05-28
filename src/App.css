@@ -1,25 +1,18 @@
 body {
-  background-color: black;
-  color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-h1 {
-  font-weight: 400;
-  margin: 0;
-  padding: 0;
-  line-height: 2;
-  font-size: 1.5rem;
+    background-color: black;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 main {
-  margin: 0 auto;
-  max-width: 1080px;
-  overflow: hidden;
+    margin: 0 auto;
+    max-width: 1080px;
+    overflow: hidden;
 }
 
 @media (min-width: 1080px) {
-  canvas {
-    border-radius: 10px;
-  }
+    canvas {
+        border-radius: 10px;
+    }
 }
